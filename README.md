@@ -151,7 +151,7 @@ ollama serve
 ### 2. Install dependencies
 
 ```bash
-git clone https://github.com/yourusername/contractsense
+git clone https://github.com/madathingalkrishnak/ContractSense
 cd contractsense
 pip install -r requirements.txt
 ```
@@ -253,7 +253,7 @@ MLflow was built for ML experiment tracking but works perfectly for LLM eval run
 
 ## Results
 
-After ingesting 20 CUAD contracts and running 3 iterative evaluation rounds on 8 QA pairs::
+After ingesting 20 CUAD contracts and running 3 iterative evaluation rounds on 8 QA pairs:
 
 | Metric | Score |
 |---|---|
