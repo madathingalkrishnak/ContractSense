@@ -1,0 +1,42 @@
+# ── Core LLM & RAG ───────────────────────────────────────────────
+langchain==0.3.25
+langchain-community==0.3.19
+langchain-core>=0.3.65, <1.0.0
+langchain-ollama==0.3.2
+langchain-chroma==0.2.4
+langchain-text-splitters==0.3.8
+
+
+# ── Vector Store ─────────────────────────────────────────────────
+chromadb==1.0.9
+
+# ── Embeddings ───────────────────────────────────────────────────
+sentence-transformers==3.1.1
+
+# ── PDF Parsing ──────────────────────────────────────────────────
+PyMuPDF==1.24.10
+
+# ── Evaluation ───────────────────────────────────────────────────
+ragas==0.2.15
+
+# ── Experiment Tracking ──────────────────────────────────────────
+mlflow==2.16.2
+
+
+# ── Data Processing ──────────────────────────────────────────────
+pandas==2.2.3
+numpy==1.26.4
+duckdb==1.1.1
+
+# ── Dashboard ────────────────────────────────────────────────────
+streamlit==1.39.0
+plotly==5.24.1
+
+# ── Utilities ────────────────────────────────────────────────────
+python-dotenv==1.0.1
+pydantic==2.9.2
+tqdm==4.66.5
+rich==13.8.1
+loguru==0.7.2
+httpx==0.27.2
+tenacity==9.0.0

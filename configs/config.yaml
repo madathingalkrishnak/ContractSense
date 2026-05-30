@@ -1,0 +1,98 @@
+# ============================================================
+# ContractSense — Master Configuration
+# ============================================================
+
+project:
+  name: contractsense
+  version: "1.0.0"
+  description: "LLM Evaluation & Simulation Platform for Contract Intelligence"
+
+# ── Paths ────────────────────────────────────────────────────
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_cuad: "data/cuad"
+  evals_datasets: "evals/datasets"
+  evals_runs: "evals/runs"
+  evals_judges: "evals/judges"
+  chroma_db: "data/chroma_db"
+  mlflow_uri: "mlruns"
+
+# ── Ingestion ────────────────────────────────────────────────
+ingestion:
+  chunk_size: 512            # tokens per chunk
+  chunk_overlap: 64          # overlap between chunks
+  chunking_strategy: "recursive"   # recursive | semantic | fixed
+  min_chunk_length: 100      # discard chunks shorter than this
+  max_chunks_per_doc: 500    # safety cap
+
+# ── Embedding ────────────────────────────────────────────────
+embedding:
+  model: "BAAI/bge-small-en-v1.5"   # fast, high quality, free
+  batch_size: 64
+  device: "cpu"                      # cpu | cuda
+
+# ── Vector Store ─────────────────────────────────────────────
+chroma:
+  collection_name: "contracts"
+  distance_metric: "cosine"
+
+# ── LLM (Ollama) ─────────────────────────────────────────────
+llm:
+  model: "llama3.2:3b"        # change to llama3.1:8b if you have RAM
+  base_url: "http://localhost:11434"
+  temperature: 0.1
+  max_tokens: 1024
+  timeout: 120
+
+# ── RAG ──────────────────────────────────────────────────────
+rag:
+  top_k: 3                   # chunks to retrieve
+  rerank: false              # enable if you add a reranker later
+  score_threshold: 0.55       # minimum cosine similarity to include
+  system_prompt: |
+    You are a precise legal contract analyst. Your rules are strict:
+    1. Answer ONLY using information explicitly stated in the provided excerpts
+    2. If the answer is not in the excerpts, say exactly: "I cannot find this in the provided excerpts."
+    3. Do NOT mention contract file names, exhibit numbers, or any metadata
+    4. Do NOT infer, speculate, or combine information across excerpts
+    5. Keep answers short and direct — one to three sentences maximum
+    6. Quote the exact clause text when possible
+# ── Simulation ───────────────────────────────────────────────
+simulation:
+  num_conversations: 50      # per eval run
+  turns_per_conversation: 4  # back-and-forth turns
+  personas:
+    - name: "startup_founder"
+      description: "Non-lawyer founder checking key business terms"
+      focus: ["liability", "termination", "payment", "IP ownership"]
+    - name: "legal_reviewer"
+      description: "Lawyer doing detailed contract review"
+      focus: ["indemnification", "governing law", "representations", "warranties"]
+    - name: "procurement_officer"
+      description: "Enterprise buyer evaluating vendor risk"
+      focus: ["SLA", "data privacy", "audit rights", "penalties"]
+
+# ── Evaluation ───────────────────────────────────────────────
+evaluation:
+  metrics:
+    - faithfulness          # is answer grounded in retrieved context?
+    - answer_relevancy      # does answer address the question?
+    - context_precision     # are retrieved chunks relevant?
+    - context_recall        # are all relevant chunks retrieved?
+    - hallucination_score   # custom: does answer introduce facts not in context?
+  judge_model: "llama3.2:3b"
+  judge_temperature: 0.0    # deterministic judgments
+  batch_size: 10
+  pass_thresholds:
+    faithfulness: 0.75
+    answer_relevancy: 0.70
+    context_precision: 0.65
+    hallucination_score: 0.80   # higher = less hallucination
+
+# ── MLflow ───────────────────────────────────────────────────
+mlflow:
+  experiment_name: "contractsense-evals"
+  run_tags:
+    project: "contractsense"
+    phase: "evaluation"
