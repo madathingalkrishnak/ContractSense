@@ -20,7 +20,7 @@ Most RAG projects stop at "it answers questions." This project goes further — 
 | **LLM Evaluation** | LLM-as-judge with 4 metrics: faithfulness, relevancy, hallucination, compliance |
 | **Agentic Patterns** | LLM-as-user simulator that adapts to chatbot responses in real time |
 | **Prompt Engineering** | Versioned prompts, persona-based generation, structured output parsing |
-| **MLOps / LLMOps** | MLflow experiment tracking, DVC data versioning, CI regression checks |
+| **MLOps / LLMOps** | MLflow experiment tracking, CI regression checks |
 | **Production Thinking** | Guardrails, score thresholds, failure analysis, retry logic |
 | **Software Engineering** | Typed config, modular architecture, unit + integration tests |
 
@@ -77,9 +77,8 @@ Most RAG projects stop at "it answers questions." This project goes further — 
 | Embeddings | **BAAI/bge-small-en-v1.5** | Near OpenAI quality, runs on CPU |
 | Vector store | **ChromaDB** | Local persistent store, no infra |
 | RAG framework | **LangChain** | Industry standard orchestration |
-| Evaluation | **RAGAS + custom LLM judges** | Open source eval framework |
+| Evaluation | **custom LLM judges** | Open source eval framework |
 | Experiment tracking | **MLflow** | Track eval runs like model experiments |
-| Data versioning | **DVC** | Version datasets like code |
 | Dashboard | **Streamlit + Plotly** | Clean interactive UI |
 | Data processing | **DuckDB + Pandas** | Fast local analytics |
 | Testing | **pytest** | Unit + integration test coverage |
@@ -160,9 +159,11 @@ pip install -r requirements.txt
 ### 3. Download CUAD dataset
 
 ```bash
+# 1. Download data.zip from:
+#    https://github.com/TheAtticusProject/cuad/raw/main/data.zip
+# 2. Extract and copy CUADv1.json → data/cuad/CUAD_v1.json
+# 3. Then run:
 python scripts/download_cuad.py
-# Downloads 510 real contracts from HuggingFace (~150MB)
-# Creates data/cuad/manifest.csv + data/cuad/sample_manifest.csv
 ```
 
 ### 4. Run the full pipeline (dev mode — fast)
@@ -252,16 +253,16 @@ MLflow was built for ML experiment tracking but works perfectly for LLM eval run
 
 ## Results
 
-After ingesting 20 CUAD contracts and running 50 simulated conversations:
+After ingesting 20 CUAD contracts and running 3 iterative evaluation rounds on 8 QA pairs::
 
 | Metric | Score |
 |---|---|
-| Faithfulness | 0.81 |
-| Answer Relevancy | 0.76 |
-| Hallucination Score | 0.84 |
-| Overall Pass Rate | 68% |
+| Faithfulness        | 0.62 |
+| Answer Relevancy    | 0.56 |
+| Hallucination Score | 0.81 |
+| Overall Pass Rate   | 50%  |
 
-Context engineering (restructuring retrieved chunks) was the highest-impact improvement — matching the DoorDash finding that context quality matters more than model size.
+Tightening the system prompt (strict grounding rules) and simplifying the judge rubric were the highest-impact improvements — hallucination score jumped from 0.25 → 0.81 across three iterative eval runs.
 
 ---
 
